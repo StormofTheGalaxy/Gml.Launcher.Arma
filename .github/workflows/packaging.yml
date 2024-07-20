@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build EXE-files
+    name: Build EXE
     runs-on: ubuntu-latest
 
     steps:
@@ -72,22 +72,13 @@ jobs:
         name: StormLauncher
         path: ./src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe
 
-    - name: Publish Self-Contained
-      run: dotnet publish ./src/Gml.Launcher -f net8.0-windows -c Release -r win-x64 --self-contained true -p:FileVersion=${{ github.ref_name }} -p:AssemblyVersion=${{ github.ref_name }} -p:RuntimeIdentifier=win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:PublishReadyToRun=true
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: StormLauncherNET
-        path: ./src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe
-
   sign:
     needs:
      - build
-    name: CodeSign files
+    name: CodeSign exe
     runs-on: windows-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
             name: StormLauncher
             path: bin/
@@ -107,7 +98,73 @@ jobs:
           asset_name: "StormLauncher.exe"
           file: ./bin/Gml.Launcher.exe
 
-      - uses: actions/download-artifact@v3
+  build-self:
+    name: Build EXE-selfcontained
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Repository name with owner. For example, actions/checkout
+        # Default: ${{ github.repository }}
+        repository: 'SoG/Gml.Launcher.Arma'
+    
+        # The branch, tag or SHA to checkout. When checking out the repository that
+        # triggered a workflow, this defaults to the reference or SHA for that event.
+        # Otherwise, uses the default branch.
+        ref: 'dev'
+    
+        # Personal access token (PAT) used to fetch the repository. The PAT is configured
+        # with the local git config, which enables your scripts to run authenticated git
+        # commands. The post-job step removes the PAT.
+        #
+        # We recommend using a service account with the least permissions necessary. Also
+        # when generating a new PAT, select the least scopes necessary.
+        #
+        # [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
+        #
+        # Default: ${{ github.token }}
+        token: ${{ secrets.TOKEN }}
+
+        # The base URL for the GitHub instance that you are trying to clone from, will use
+        # environment defaults to fetch from the same instance that the workflow is
+        # running from unless specified. Example URLs are https://github.com or
+        # https://my-ghes-server.example.com 
+        github-server-url: 'https://git.stormgalaxy.com'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build ./src/Gml.Launcher --no-restore
+
+    # - name: Test
+    #   run: dotnet test ./src/Gml.Client/tests/Gml.Client.Tests --no-build --verbosity normal
+
+    - name: Publish Self-Contained
+      run: dotnet publish ./src/Gml.Launcher -f net8.0-windows -c Release -r win-x64 --self-contained true -p:FileVersion=${{ github.ref_name }} -p:AssemblyVersion=${{ github.ref_name }} -p:RuntimeIdentifier=win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:PublishReadyToRun=true
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: StormLauncherNET
+        path: ./src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe
+
+  sign-self:
+    needs:
+      - build-self
+    name: CodeSign exe-selfcontained
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@v4
         with:
             name: StormLauncherNET
             path: bin-NET/
