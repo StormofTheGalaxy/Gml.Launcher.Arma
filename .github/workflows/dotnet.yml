@@ -3,6 +3,10 @@
 
 name: .NET
 
+permissions:
+  id-token: write
+  attestations: write
+
 on:
   push:
     branches: [ "main" ]
@@ -58,6 +62,10 @@ jobs:
 
     - name: Publish Depend
       run: dotnet publish ./src/Gml.Launcher -f net8.0-windows -c Release -r win-x64 --self-contained false -p:RuntimeIdentifier=win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:PublishReadyToRun=true
+
+    - uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: './src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe'
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
