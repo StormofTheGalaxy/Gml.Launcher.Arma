@@ -112,6 +112,7 @@ jobs:
         # Repository name with owner. For example, actions/checkout
         # Default: ${{ github.repository }}
         repository: 'SoG/Gml.Launcher.Arma'
+        submodules: recursive
     
         # The branch, tag or SHA to checkout. When checking out the repository that
         # triggered a workflow, this defaults to the reference or SHA for that event.
@@ -140,9 +141,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-
-    - name: Checkout submodules
-      run: git submodule update --init --recursive
 
     - name: Restore dependencies
       run: dotnet restore
