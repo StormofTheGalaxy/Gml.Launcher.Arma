@@ -73,7 +73,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: StormLauncher
+        name: StormLauncher-Depend
         path: ./src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe
 
   sign:
@@ -84,7 +84,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-            name: StormLauncher
+            name: StormLauncher-Depend
             path: bin/
       
       - uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
@@ -99,7 +99,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
           overwrite: true
-          asset_name: "StormLauncher.exe"
+          asset_name: "StormLauncher-Depend.exe"
           file: ./bin/Gml.Launcher.exe
 
   build-self:
@@ -163,7 +163,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: StormLauncherNET
+        name: StormLauncher
         path: ./src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe
 
   sign-self:
@@ -174,7 +174,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-            name: StormLauncherNET
+            name: StormLauncher
             path: bin-NET/
 
       - uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
@@ -189,5 +189,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
           overwrite: true
-          asset_name: "StormLauncher-NETContained.exe"
+          asset_name: "StormLauncher.exe"
           file: ./bin-NET/Gml.Launcher.exe
