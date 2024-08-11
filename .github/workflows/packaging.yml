@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   build:
-    name: Build EXE
+    name: Build EXE (Depend)
     runs-on: ubuntu-latest
 
     steps:
@@ -103,7 +103,7 @@ jobs:
           file: ./bin/Gml.Launcher.exe
 
   build-self:
-    name: Build EXE-selfcontained
+    name: Build EXE (Selfcontained)
     runs-on: ubuntu-latest
 
     steps:
