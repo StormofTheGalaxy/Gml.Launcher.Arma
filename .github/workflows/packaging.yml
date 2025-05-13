@@ -64,17 +64,17 @@ jobs:
     #   run: dotnet test ./src/Gml.Client/tests/Gml.Client.Tests --no-build --verbosity normal
 
     - name: Publish Depended
-      run: dotnet publish ./src/Gml.Launcher -f net8.0-windows -c Release -r win-x64 --self-contained false -p:FileVersion=${{ github.ref_name }} -p:AssemblyVersion=${{ github.ref_name }} -p:RuntimeIdentifier=win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:PublishReadyToRun=true
+      run: dotnet publish ./src/Gml.Launcher -f net8.0 -c Release -r win-x64 --self-contained false -p:FileVersion=${{ github.ref_name }} -p:AssemblyVersion=${{ github.ref_name }} -p:RuntimeIdentifier=win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:PublishReadyToRun=true
 
     - uses: actions/attest-build-provenance@v1
       with:
-        subject-path: './src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe'
+        subject-path: './src/Gml.Launcher/bin/Release/net8.0/win-x64/publish/Gml.Launcher.exe'
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: StormLauncher-Depend
-        path: ./src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe
+        path: ./src/Gml.Launcher/bin/Release/net8.0/win-x64/publish/Gml.Launcher.exe
 
   sign:
     needs:
@@ -152,17 +152,17 @@ jobs:
     #   run: dotnet test ./src/Gml.Client/tests/Gml.Client.Tests --no-build --verbosity normal
 
     - name: Publish Self-Contained
-      run: dotnet publish ./src/Gml.Launcher -f net8.0-windows -c Release -r win-x64 --self-contained true -p:FileVersion=${{ github.ref_name }} -p:AssemblyVersion=${{ github.ref_name }} -p:RuntimeIdentifier=win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:PublishReadyToRun=true
+      run: dotnet publish ./src/Gml.Launcher -f net8.0 -c Release -r win-x64 --self-contained true -p:FileVersion=${{ github.ref_name }} -p:AssemblyVersion=${{ github.ref_name }} -p:RuntimeIdentifier=win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:PublishReadyToRun=true
 
     - uses: actions/attest-build-provenance@v1
       with:
-        subject-path: './src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe'
+        subject-path: './src/Gml.Launcher/bin/Release/net8.0/win-x64/publish/Gml.Launcher.exe'
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: StormLauncher
-        path: ./src/Gml.Launcher/bin/Release/net8.0-windows/win-x64/publish/Gml.Launcher.exe
+        path: ./src/Gml.Launcher/bin/Release/net8.0/win-x64/publish/Gml.Launcher.exe
 
   sign-self:
     needs:
